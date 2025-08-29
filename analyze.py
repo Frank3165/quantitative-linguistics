@@ -1,9 +1,8 @@
 import json
 from pypinyin import lazy_pinyin, Style
 
-with open('tokens.json', 'r', encoding='utf-8') as f:
-    tokens = json.load(f)
-types = set(tokens)
+with open('types_pynlpir.json', 'r', encoding='utf-8') as f:
+    types = json.load(f)
 
 def distribution(n):
     num = 0
@@ -36,25 +35,7 @@ def altmann (items, file):
     for i in items:
         file.write(f'{i[0]}\t{i[1]}\n')
 
-with open('phones_dynamic.txt', 'w') as pd, \
-    open('characters_dynamic.txt', 'w') as cd, \
-    open('phones_static.txt', 'w') as ps, \
-    open('characters_static.txt', 'w') as cs, \
-    open('phones_average.txt', 'w') as pa, \
-    open('characters_average.txt', 'w') as ca, \
-    open('syllable_phone_dynamic.txt', 'w') as spd, \
-    open('syllable_phone_static.txt', 'w') as sps:
-    a, b, y = distribution(tokens)
+with open('syllable_phone_static_new.txt', 'w') as sps:
     c, d, z = distribution(types)
-    e = [(k1, v1 / v2) for (k1, v1), (k2, v2) in zip(a, c)]
-    f = [(k1, v1 / v2) for (k1, v1), (k2, v2) in zip(b, d)]
-    g = [(k1, v1 / v2 / k1) for (k1, v1), (k2, v2) in zip(y, b)]
     h = [(k1, v1 / v2 / k1) for (k1, v1), (k2, v2) in zip(z, d)]
-    altmann(a, pd)
-    altmann(b, cd)
-    altmann(c, ps)
-    altmann(d, cs)
-    altmann(e, pa)
-    altmann(f, ca)
-    altmann(g, spd)
     altmann(h, sps)

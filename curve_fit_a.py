@@ -3,7 +3,7 @@ from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 from scipy.stats import chi2
 
-with open('syllable_phone_static_new.txt','r') as sp:
+with open('syllable_phone_HSK.txt','r') as sp:
     g = []
     n = 0
     for i in sp.readlines():
@@ -17,20 +17,20 @@ with open('syllable_phone_static_new.txt','r') as sp:
 x = np.array([item[0] for item in g])
 y = np.array([item[1] for item in g])
 
-# 定义拟合函数 y = a * x^(-b)
-def func(x, a, b):
-    return a * x ** (-b)
+# 定义拟合函数 y = 2.88 * x^(-b)
+def func(x, b):
+    return 2.6493902439 * x ** (-b)
 
-# 拟合
+# 只拟合b
 popt, pcov = curve_fit(func, x, y, maxfev=10000)
-a, b = popt
+b = popt[0]
 
 # 计算理论值
-y_theory = func(x, *popt)
+y_theory = func(x, b)
 
 # 卡方统计量
-chi2_stat = np.sum((y - y_theory) ** 2 / (y_theory + 1e-10))  # 防止除零
-dof = len(x) - 2  # 自由度=样本数-参数数
+chi2_stat = np.sum((y - y_theory) ** 2 / (y_theory + 1e-10))
+dof = len(x) - 1  # 只拟合1个参数
 p_value = 1 - chi2.cdf(chi2_stat, dof)
 
 # 计算决定系数R^2
@@ -38,16 +38,15 @@ ss_res = np.sum((y - y_theory) ** 2)
 ss_tot = np.sum((y - np.mean(y)) ** 2)
 r2 = 1 - ss_res / ss_tot
 
-print(f"拟合参数: a={a}, b={b}")
+print(f"拟合参数: b={b}")
 print(f"卡方统计量 C = {chi2_stat}")
 print(f"P(X^2) = {p_value}")
 print(f"决定系数 R^2 = {r2}")
 
 # 绘图
 plt.scatter(x, y, label='data')
-# 理论曲线用更平滑的x
 x_smooth = np.linspace(min(x), max(x), 200)
-plt.plot(x_smooth, func(x_smooth, *popt), 'r-', label=f'fit: y={a:.2f}*x^(-{b:.2f})')
+plt.plot(x_smooth, func(x_smooth, b), 'r-', label=f'fit: y=2.649*x^(-{b:.2f})')
 plt.xlabel('x')
 plt.ylabel('y')
 plt.legend()
