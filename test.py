@@ -1,6 +1,6 @@
 from pypinyin import lazy_pinyin, Style
 
-i = '百分之十几二十几'
+i = '挖'
 finals = lazy_pinyin(i, style=Style.FINALS)
 inits = lazy_pinyin(i, style=Style.INITIALS, strict=True)
 num = 0
@@ -16,4 +16,4 @@ for z in inits:
         pass
     else:
         num += 1
-print(num)
+print(inits, finals, num)
